@@ -1,0 +1,35 @@
+(* @design schema *)
+
+-- Create the 'companies' table
+CREATE TABLE companies (id int primary key,name varchar(100));
+
+-- Create the 'warehouses' table, with a foreign key to 'companies'
+CREATE TABLE warehouses (id int primary key,company_id int,name varchar(100),foregin key (company_id) references companies(id));
+
+-- Create the 'suppliers' table
+CREATE TABLE suppliers (id int primary key,name varchar(100),contact_email varchar(100));
+
+-- Create the 'products' table, with foreign keys to 'companies' and 'suppliers'
+CREATE TABLE products (id int primary key,sku varchar(255) unique,name varchar(255),description text,price decimal(10,2),company_id int,primary_supplier_id ,foreing key(company_id) references companies(id),foreing key (primary_supplier_id) Rreferences suppliers(id));
+
+-- Create the 'product_warehouse_inventory' table, using a composite primary key
+CREATE TABLE product_warehouse_inventory (product_id int,warehouse_id int,quantity int,primary key(product_id, warehouse_id),foreing key(product_id) references products(id),foreing key (warehouse_id) references warehouses(id));
+
+-- Create the 'inventory_history' table to track changes
+CREATE TABLE inventory_history (id int primary key,product_id int,warehouse_id int,change_type varchar(50),quantity_change int,timestamp TIMESTAMP,foreing key(product_id) references products(id),foreing key(warehouse_id) references warehouses(id));
+
+-- Create the 'product_bundles' table to model bundled products
+CREATE TABLE product_bundles (bundle_id int,component_id int,quantity int,primary key (bundle_id, component_id),foreing key (bundle_id) references products(id),foreing key (component_id) references products(id));
+
+(*2. Gaps I'd Ask About  *)
+1} Who owns the products? The prompt says suppliers provide products to companies. Does a product belong just to one company, or can the same SKU be shared between different companies on our platform?
+2} What triggers inventory changes? We gotta track when inventory levels change, but what all events should we log? Is it just sales and restocks, or do we need to track returns or damaged products too?
+3} One or Many Suppliers? Can a product have more than one supplier? If so, how do we decide which one is the main supplier for reordering?
+4 How do bundles work? The requirements mention products can be "bundles". When someone buys a bundle, do we deduct the inventory of the individual parts, or is the bundle a separate item that has its own stock?
+5} What is optional? The instructions say some fields might be optional. Which ones are they? Like, is a product description or a supplier's email always required?
+
+(*Explain Decisions: Justify your design choices  *)
+1} Seperate table
+2} Composite key
+3} History table
+4} Unique SKU
