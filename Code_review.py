@@ -58,3 +58,15 @@ def create_product():
         # Log the detailed error for internal debugging
         print(f"An internal database error occurred: {e}")
         return jsonify({"error": "An internal server error occurred."}), 500
+
+'''
+1} Database Schema: It's assumed that Product and Inventory are database models with the fields used in the code (e.g., name, sku, price, warehouse_id, product_id, quantity). It's also assumed that a 
+db.session object is available for database interactions.
+
+2} SKU Uniqueness: Although the "Additional Context" states that SKUs must be unique, the provided code doesn't enforce this. The corrected code assumes that the database has a unique constraint on the 
+sku column, but it also adds an application-level check for robustness.
+
+3} Price Data Type: The code assumes that data['price'] is a value that can be cast to a decimal or float, as per the additional context.
+Warehouse Existence: The provided code assumes that the warehouse_id in the request payload corresponds to an existing and valid warehouse. The corrected code doesn't explicitly validate this, assuming it's handled by database foreign key constraints.
+Business Logic: It's assumed that the initial product creation and the first inventory count should be a single, atomic operation. The original code's separation of these steps is a key flaw.
+'''
