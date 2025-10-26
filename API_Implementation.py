@@ -121,4 +121,3 @@ def get_low_stock_alerts(company_id):
 
 if __name__ == '__main__':
     app.run(debug=True)
-
